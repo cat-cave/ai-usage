@@ -14,7 +14,7 @@
 //!   2. api key only → GET `<host>/v1/token_plan/remains` (Bearer), then the
 //!      coding_plan endpoint as fallback
 //!
-//! Host default `api.minimax.chat` (what the key responds on); override via
+//! Host default `api.minimax.io` (current global MiniMax API host); override via
 //! `MINIMAX_HOST`. HTTPS-only. Response is a list of per-model remains
 //! (CodexBar's `MiniMaxModelRemains` shape): each has `current_interval_*` and
 //! `current_weekly_*` counts + `_remaining_percent` + epoch `_end_time`.
@@ -31,7 +31,7 @@ use crate::model::{
 use crate::provider::Provider;
 use crate::source::{Source, Sourced, UnavailableReason};
 
-const DEFAULT_HOST: &str = "api.minimax.chat";
+const DEFAULT_HOST: &str = "api.minimax.io";
 const CODING_PLAN_PATH: &str = "/v1/api/openplatform/coding_plan/remains";
 const TOKEN_PLAN_PATH: &str = "/v1/token_plan/remains";
 const ENDPOINT: &str = "minimax.coding-plan-remains";
@@ -196,7 +196,7 @@ fn base_resp_error(body: &Value) -> Option<String> {
         .get("base_resp")
         .and_then(|b| b.get("status_code"))
         .and_then(serde_json::Value::as_i64)?;
-    if code == 200 {
+    if code == 0 || code == 200 {
         return None;
     }
     let msg = body
@@ -388,7 +388,7 @@ mod tests {
     #[test]
     fn parses_model_remains_live_shape() {
         let body = serde_json::json!({
-            "base_resp": {"status_code": 200},
+            "base_resp": {"status_code": 0},
             "data": {
                 "model_remains": [{
                     "model_name": "abab6.5s",
@@ -425,5 +425,7 @@ mod tests {
         );
         let ok = serde_json::json!({"base_resp":{"status_code":200}});
         assert!(base_resp_error(&ok).is_none());
+        let current_ok = serde_json::json!({"base_resp":{"status_code":0,"status_msg":"success"}});
+        assert!(base_resp_error(&current_ok).is_none());
     }
 }
