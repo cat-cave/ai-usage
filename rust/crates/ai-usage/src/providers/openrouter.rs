@@ -73,7 +73,7 @@ impl OpenRouterProvider {
             .client
             .get(&url)
             .bearer_auth(token)
-            .header("HTTP-Referer", "https://github.com/trevor/ai-usage")
+            .header("HTTP-Referer", "https://github.com/cat-cave/ai-usage")
             .header("X-Title", "ai-usage")
             .send()
             .await

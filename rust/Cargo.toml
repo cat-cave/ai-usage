@@ -6,7 +6,7 @@ members = ["crates/ai-usage", "crates/ai-usage-cli"]
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/trevor/ai-usage"
+repository = "https://github.com/cat-cave/ai-usage"
 authors = ["Trevor"]
 
 [workspace.dependencies]
