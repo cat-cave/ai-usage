@@ -37,8 +37,8 @@ pub fn live_windowed_report(
     used: f64,
     reset_at: Option<OffsetDateTime>,
 ) -> ProviderReport {
-    let now = OffsetDateTime::now_utc();
     use crate::source::unavailable_field as u;
+    let now = OffsetDateTime::now_utc();
     ProviderReport {
         id,
         account: Sourced {
