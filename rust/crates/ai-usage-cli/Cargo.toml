@@ -1,0 +1,27 @@
+[package]
+name = "ai-usage-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "CLI that reports AI coding-provider capacity and recommends a provider for a task."
+readme = "../../README.md"
+keywords = ["ai", "cli", "quota", "codex", "claude"]
+categories = ["command-line-utilities", "api-bindings"]
+
+[[bin]]
+name = "ai-usage"
+path = "src/main.rs"
+
+[dependencies]
+ai-usage.workspace = true
+tokio.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+clap = { version = "4", features = ["derive", "env"] }
+time.workspace = true
+
+[lints]
+workspace = true

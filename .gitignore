@@ -1,0 +1,12 @@
+/target
+**/target
+/result
+/result-*
+.direnv/
+.pre-commit-config.yaml
+
+# local secrets / caches — never commit
+*.env
+.envrc.local
+.config/ai-usage/
+.cache/ai-usage/

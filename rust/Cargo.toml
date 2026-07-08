@@ -1,0 +1,70 @@
+[workspace]
+resolver = "2"
+members = ["crates/ai-usage", "crates/ai-usage-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/trevor/ai-usage"
+authors = ["Trevor"]
+
+[workspace.dependencies]
+ai-usage = { path = "crates/ai-usage" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+anyhow = "1"
+time = { version = "0.3", features = ["serde", "formatting", "parsing"] }
+rust_decimal = { version = "1.36", features = ["serde"] }
+async-trait = "0.1"
+regex = "1"
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = "z"
+panic = "abort"
+strip = "symbols"
+
+[profile.release.package."*"]
+opt-level = "s"
+
+# Workspace-wide lint policy. Pedantic/cargo/nursery on by default; the truly
+# noisy or debatable groups are selectively allowed so `-D warnings` is
+# enforceable in CI instead of ignored. Correctness lints (casts, float_cmp)
+# stay on and are fixed at the call sites.
+[workspace.lints.clippy]
+# Groups at priority -1 so individual `allow`s below override them.
+pedantic = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+# Naming: short field/method names are fine even if they echo the type.
+module_name_repetitions = "allow"
+# `#[must_use]` on every accessor is noise; we add it only where it matters.
+must_use_candidate = "allow"
+# Internal helpers don't all need `# Errors` / `# Panics` doc sections.
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+# Doc backtick enforcement is churny for marginal gain; kept off.
+doc_markdown = "allow"
+# Module-doc first-paragraph length is opinionated; kept off.
+too_long_first_doc_paragraph = "allow"
+# Constructors with several bools are acceptable for option-bag structs.
+struct_excessive_bools = "allow"
+# We use `Default::default()` in a few clarity spots.
+new_without_default = "allow"
+# Cast lints fire on money/token/timestamp math. All cast sites are over
+# controlled ranges (token counts < 10^15, epoch seconds < 2^31, money < $1M,
+# percentages in 0–100), so precision/truncation/wrap are not real risks here.
+# Verified safe rather than wrapped in fallible conversions for readability.
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_sign_loss = "allow"
+# Transitive duplicate crate versions (windows-sys/syn/rand via reqwest/etc.) are
+# normal for a CLI dependency tree; real dup bans live in deny.toml.
+multiple_crate_versions = "allow"
+

@@ -1,0 +1,50 @@
+# cargo-deny configuration. Run: `just deny`.
+# Docs: https://embarkstudios.github.io/cargo-deny/
+
+[graph]
+all-features = true
+
+[advisories]
+# Fail the build on any known vulnerability. `cargo audit` is the second layer
+# (`just audit`); deny catches it at the lockfile too.
+version = 2
+db-urls = ["https://github.com/RustSec/advisory-db"]
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Allow the standard permissive licenses used by our dependency tree.
+version = 2
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-DFS-2016",
+    "Unicode-3.0",
+    "Zlib",
+    "CC0-1.0",
+    "MPL-2.0",
+    "CDLA-Permissive-2.0",
+]
+confidence-threshold = 0.8
+exceptions = []
+
+[bans]
+# Detect duplicate crate versions. We allow specific transitive duplicates that
+# are unavoidable in the reqwest/tokio tree; anything new surfaces here.
+multiple-versions = "warn"
+# Workspace path-deps (our own `ai-usage` lib) carry no version — allow them.
+wildcards = "allow"
+highlight = "all"
+allow = []
+deny = []
+skip = []
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
